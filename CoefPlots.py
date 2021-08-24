@@ -22,21 +22,80 @@ Settings=namedtuple('Settings', ["figwidth", "table_position", "fontsize",
 defaultSettings=Settings(
     figwidth=8,
     table_position='left',
-    fontsize=11,
+    fontsize=12,
     marker_props={"fmt":"rd", "markersize":4},
     errorbar_props={"linestyle":"", "linewidth":1, "color":"black", "capsize":4},
     vline_props={"linestyle":"--", "color":"grey", "linewidth":0.5}
 )
 
 
-# newSettings=Settings(
-#     figwidth=8,
-#     table_position='left',
-#     fontsize=11,
-#     marker={"fmt":"rd", "markersize":4},
-#     errorbar={"linestyle":"", "linewidth":1, "color":"black", "capsize":4},
-#     vline={"linestyle":"--", "color":"grey", "linewidth":0.5}
-# )
+class PlotUtils():
+    """
+    A wrapper class for matplotlib.figure.Figure.
+    Provides basic functions. Allows for chaining.
+
+    ...
+
+    Attributes
+    ----------
+    None
+
+    Methods
+    -------
+    annotate(x, y, text:str, **kwargs):
+        Adds figure notes.
+        x: x table_position
+        y: y table_position
+        text: notes
+        **kwargs: any additional arguments.
+
+    title(text:str, **kwargs):
+        Adds title to Figure
+        text: Title
+
+    show(**kwargs):
+        Displays figure
+
+    save(filename, **kwargs):
+        Saves figure to provided filename/path
+
+   fig_adjust(**kwargs):
+        Adjust the figure, to allow for better spacing of title.
+
+
+    """
+
+    def __init__(self, fig: None):
+        self.fig = fig if fig else plt.gcf()
+        self.fig.subplots_adjust(top=0.88)
+
+    #Add Annotations
+    def annotate(self, x, y, text: str, **kwargs):
+        # plt.annotate(text, **kwargs)
+        plt.figtext(x, y, text, horizontalalignment='right', **kwargs)
+        return self
+
+        # Add Title
+    def title(self,
+                  text: str,
+                  **kwargs):
+
+        # kwargs["pad"] = kwargs.get("pad", "15")
+        plt.suptitle(text, **kwargs)
+        return self
+
+    def show(self, **kwargs):
+        plt.show(**kwargs)
+        return self
+
+    def save(self, filename, **kwargs):
+        kwargs["bbox_inches"] = kwargs.get("bbox_inches", "tight")
+        plt.savefig(filename, **kwargs)
+        return self
+
+    def fig_adjust(self, **kwargs):
+        plt.subplots_adjust(**kwargs)
+        return self
 
 
 def rebuild_font_cache():
@@ -124,7 +183,7 @@ def format_axes(ax, y, ylabels, **kwargs):
     ax.spines['top'].set_visible(False)
     ax.tick_params(left=False, right=False)
 
-def make_table(ax, tabledata, columns, col_labels, bbox):
+def make_table(ax, tabledata, columns, col_labels, bbox, **kwargs):
     """
     Add table to axis.
     Table location is determined by the table position setting in Settings()
@@ -132,13 +191,22 @@ def make_table(ax, tabledata, columns, col_labels, bbox):
     y=tabledata.shape[0]
     colWidths=[0.02]*len(columns)
 
+
+    kwargs["fontsize"]=kwargs.get("fontsize", settings.fontsize)
+    # the_table.set_fontsize()
+
     the_table = ax.table(cellText=tabledata,
                               # rowColours=colors,
                               colWidths=colWidths,
                               colLabels=col_labels,
                               cellLoc='center',
                               colLoc='center',
-                             bbox=bbox)
+                             bbox=bbox,
+                             **kwargs)
+
+    the_table.auto_set_font_size(False)
+    the_table.set_fontsize(kwargs["fontsize"])
+
 
     cellDict = the_table.properties()["celld"]
 
@@ -148,13 +216,6 @@ def make_table(ax, tabledata, columns, col_labels, bbox):
     for row in range(1, y+1):
         for col in range(0, len(columns)):
             cellDict[(row, col)].visible_edges=''
-
-
-    the_table.auto_set_font_size(False)
-    the_table.set_fontsize(settings.fontsize)
-
-
-
 
 
 def make_coef_plot(x:list,
@@ -178,7 +239,7 @@ def make_coef_plot(x:list,
 
         Returns
         -------
-        fig : matplotlib.figure.Figure
+        fig : PlotUtils object. (PlotUtils is a wrapper for matplotlib.figure.Figure)
 
         Other Parameters
         ----------------
@@ -190,18 +251,19 @@ def make_coef_plot(x:list,
                     "errorbar_kwargs":formatting for the errorbars
                     "axvline_kwargs": formatting for the vertical line at 0
                     "ylabel_kwargs": general formatting for y axis labels
+                    "table_kwargs": general formatting for the table
 
 
         Example function call:
         ----------------
 
-        make_coef_plot(x,
+        fig=make_coef_plot(x,
                    xerror,
                    ylabels,
                    tabledata,
                    col_dict,
                    table_position='left',
-                  kwarg_dict={"marker_kwargs":{"fmt":"bs"}})
+                  kwarg_dict={"marker_kwargs":{"fmt":"bs"}}).show()
 
     """
 
@@ -209,7 +271,7 @@ def make_coef_plot(x:list,
 
 
     for kdict in ["marker_kwargs", "errorbar_kwargs",
-                 "axvline_kwargs","ylabel_kwargs"]:
+                 "axvline_kwargs","ylabel_kwargs", "table_kwargs"]:
         kwarg_dict[kdict]=kwarg_dict.setdefault(kdict, {})
 
     fig, ax=plt.subplots(figsize=(settings.figwidth,len(ylabels)/2))
@@ -228,7 +290,7 @@ def make_coef_plot(x:list,
     plot_axvline(ax, **kwarg_dict["axvline_kwargs"])
     format_axes(ax, y, ylabels, **kwarg_dict["ylabel_kwargs"])
 
-    make_table(ax, tabledata, columns, col_labels, bbox)
+    make_table(ax, tabledata, columns, col_labels, bbox, **kwarg_dict["table_kwargs"])
 
 
 
@@ -241,10 +303,9 @@ def make_coef_plot(x:list,
 
     # plt.tight_layout()
 
+    return PlotUtils(fig)
 
 
-    plt.show()
-    return fig
 
 
 settings=defaultSettings
