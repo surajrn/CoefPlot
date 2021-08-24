@@ -157,40 +157,55 @@ def make_table(ax, tabledata, columns, col_labels, bbox):
 
 
 
-def make_coef_plot(ylabels:list,
-                   x:list,
+def make_coef_plot(x:list,
                    xerror:list,
+                   ylabels:list,
                    tabledata:np.ndarray,
                    table_coldict:dict,
                    table_position="right",
                    kwarg_dict={}):
+    """
+        Plot Coefficient Plots, with a Table
+
+        Parameters
+        ----------
+        x: list or array of coefficient values (Where to plot the markers)
+        xerror: list or array of confidence interval "lengths" for each coefficient in x. Has to be the same length as x.
+        ylabels : list or array of y axis labels
+        tabledata: np.ndarray containing data for the table
+        table_coldict: dictionary containing column variables and column names for the table
+
+
+        Returns
+        -------
+        fig : matplotlib.figure.Figure
+
+        Other Parameters
+        ----------------
+        table_position: str, default="right". Controls the position of the table. Only supports "left" or "right" currently.
+
+        kwarg_dict: dictionary, default={}-- allows additional formatting of various plot elements, or overrides the default formatting.
+                    Specify dictionary using the following keywords:
+                    "marker_kwargs": formatting for the markers
+                    "errorbar_kwargs":formatting for the errorbars
+                    "axvline_kwargs": formatting for the vertical line at 0
+                    "ylabel_kwargs": general formatting for y axis labels
+
+
+        Example function call:
+        ----------------
+
+        make_coef_plot(x,
+                   xerror,
+                   ylabels,
+                   tabledata,
+                   col_dict,
+                   table_position='left',
+                  kwarg_dict={"marker_kwargs":{"fmt":"bs"}})
 
     """
-    Function to make coefficient plots with table.
 
-    Parameters:
-    ylabels: list of y axis labels
-    x: list of coefficient values
-    xerror: list of confidence interval "lengths"
-    tabledata: np.ndarray containing data for the table
-    table_coldict: dictionary containing column variables and column names for the table
-    kwarg_dict: dictionary (optional) -- allows additional formatting of various plot elements.
-                Specify dictionary using the following keywords:
-                "marker_kwargs": formatting for the markers
-                "errorbar_kwargs":formatting for the errorbars
-                "axvline_kwargs": formatting for the vertical line at 0
-                "ylabel_kwargs": general formatting for y axis labels
 
-    Example function call:
-
-    make_coef_plot(ylabels,
-               x,
-               xerror,
-               tabledata,
-               col_dict,
-               table_position='left',
-              kwarg_dict={"marker_kwargs":{"fmt":"bs"}})
-    """
 
 
     for kdict in ["marker_kwargs", "errorbar_kwargs",
@@ -198,7 +213,6 @@ def make_coef_plot(ylabels:list,
         kwarg_dict[kdict]=kwarg_dict.setdefault(kdict, {})
 
     fig, ax=plt.subplots(figsize=(settings.figwidth,len(ylabels)/2))
-
 
 
     y=np.arange(0.5, len(ylabels), 1)
