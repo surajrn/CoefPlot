@@ -6,4 +6,4 @@
 
 Code to generate coefficient plots (example above), alongwith a table.
 
-For example code, see the [notebook](https://github.com/surajrn/CoefPlot/CoefPlots.ipynb) in the docs folder.
+For example code, see the [notebook](https://github.com/surajrn/CoefPlot/blob/master/CoefPlots.ipynb) in the docs folder.
