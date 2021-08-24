@@ -1,5 +1,6 @@
 
 #Important
+*/.ipynb_checkpoints/*.ipynb
 __pycache__/
 .pub
 
