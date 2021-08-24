@@ -6,4 +6,4 @@
 
 Code to generate coefficient plots with a table. Was created to present regression results alongwith additional details. 
 
-For example code, see the [notebook](https://github.com/surajrn/CoefPlot/blob/master/CoefPlots.ipynb) in the docs folder.
+For example code, see the [CoefPlots](https://github.com/surajrn/CoefPlot/blob/master/CoefPlots.ipynb) in the main folder.
