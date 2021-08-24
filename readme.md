@@ -1,6 +1,6 @@
 <h1 align="center">CoefPlot</h1>
 
-<div align="center"> <img src="./docs/Nigeria_h6.png" height="225"> </div>
+<div align="center"> <img src="./docs/Nigeria_h6.png" height="225" width="225> </div>
 
 <hr>
 
