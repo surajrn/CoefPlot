@@ -1,6 +1,6 @@
 <h1 align="center">CoefPlot</h1>
 
-<div align="center"> <img src="./docs/test.png" height="250"> </div>
+<div align="center"> <img src="./docs/test.png" height="225"> </div>
 
 <hr>
 
